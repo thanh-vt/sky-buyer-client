@@ -2,7 +2,9 @@
   "plugins": [
     "react",
     "@typescript-eslint",
-    "react-hooks"
+    "react-hooks",
+    "class-property",
+    "prettier"
   ],
   "ignorePatterns": [
     "*.config.js",
@@ -10,6 +12,7 @@
   ],
   "extends": [
     "eslint:recommended",
+    "prettier",
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended"
   ],
@@ -30,7 +33,11 @@
       "single"
     ],
     "semi": [
-      2,
+      "error",
+      "always"
+    ],
+    "class-property/class-property-semicolon": [
+      "error",
       "always"
     ],
     "curly": [
@@ -57,7 +64,8 @@
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error",
     "react/prop-types": "error",
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "prettier/prettier": "error"
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {

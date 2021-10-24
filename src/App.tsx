@@ -1,10 +1,10 @@
-import React, {ReactElement, useCallback, useState} from 'react';
+import React, { ReactElement, useCallback, useState } from 'react';
 import logo from './logo.svg';
 import './App.scss';
-import {AppHeader} from './layout/header/AppHeader';
-import {decrement, increment} from './store/counterSlice';
-import {RootState} from './store';
-import {useDispatch, useSelector} from 'react-redux';
+import { AppHeader } from './layout/header/AppHeader';
+import { decrement, increment } from './store/counterSlice';
+import { RootState } from './store';
+import { useDispatch, useSelector } from 'react-redux';
 
 function App(): ReactElement {
   const [title, setTitle] = useState('ThanhVT');
@@ -16,43 +16,45 @@ function App(): ReactElement {
   const dispatch = useDispatch();
   return (
     <div className={`App ${theme}`}>
-      <AppHeader/>
+      <AppHeader />
       <div className="App-container">
         <div className="App-main">
-          <img src={logo} className="App-logo" alt="logo"/>
+          <img src={logo} className="App-logo" alt="logo" />
           <p>
-              Edit <code>src/App.tsx</code> and save to reload.
+            Edit <code>src/App.tsx</code> and save to reload.
           </p>
-          <div className="bg-danger" style={{width: '500px', height: '1000px'}}/>
+          <div
+            className="bg-danger"
+            style={{ width: '500px', height: '1000px' }}
+          />
           <a
             className="App-link"
             href="https://reactjs.org"
             target="_blank"
             rel="noopener noreferrer"
           >
-              Learn React <br/>
-              Owner: {title} <br/>
-              Count: {count}
+            Learn React <br />
+            Owner: {title} <br />
+            Count: {count}
           </a>
 
-          <input id={'titleInput'} type="text"/>
+          <input id={'titleInput'} type="text" />
           <button onClick={setTitleFunc}>Set title</button>
           <button
             aria-label="Increment value"
             onClick={() => dispatch(increment())}
           >
-              Increment
+            Increment
           </button>
           <span>{count}</span>
           <button
             aria-label="Decrement value"
             onClick={() => dispatch(decrement())}
           >
-              Decrement
+            Decrement
           </button>
         </div>
       </div>
-
     </div>
   );
 }
