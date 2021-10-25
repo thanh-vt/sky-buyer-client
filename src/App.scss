@@ -16,7 +16,7 @@ $dropdown-link-color: var(--dropdown-link-color);
 @import 'styles/colors';
 @import 'styles/animation';
 @import 'styles/theme';
-@import "~bootstrap/scss/bootstrap";
+@import '~bootstrap/scss/bootstrap';
 
 .App {
   text-align: center;
@@ -64,7 +64,6 @@ $dropdown-link-color: var(--dropdown-link-color);
     transform: rotate(360deg);
   }
 }
-
 
 //---
 
@@ -142,7 +141,8 @@ textarea {
   background: var(--nav-bg-color);
 }
 
-.navbar-brand, .nav-link {
+.navbar-brand,
+.nav-link {
   color: var(--nav-content-color) !important;
 }
 
@@ -167,5 +167,3 @@ textarea {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
-
-

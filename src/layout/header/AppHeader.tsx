@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { Switch } from '../../shared/switch/Switch';
 import React, { ReactElement } from 'react';
 import './AppHeader.scope.scss';
+import { LoginModal } from '../login/LoginModal';
 
 export function AppHeader(): ReactElement {
   const dispatch = useDispatch();
@@ -30,6 +31,9 @@ export function AppHeader(): ReactElement {
           </Nav>
           <Nav.Item>
             <Switch onChange={(val) => dispatch(switchTheme(val))} />
+          </Nav.Item>
+          <Nav.Item>
+            <LoginModal />
           </Nav.Item>
         </Navbar.Collapse>
       </Container>
