@@ -13,6 +13,7 @@ import { AxiosResponse } from 'axios';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { clearToken, updateToken } from './tokenSlice';
 import { AllEffect } from '@redux-saga/core/effects';
+import * as queryString from 'querystring';
 
 function* fetchUser() {
   try {
@@ -33,17 +34,17 @@ function* onLogin(action: PayloadAction<UserLoginRequest>) {
     const res: AxiosResponse<TokenResponse> = yield call(() =>
       httpClient({
         method: 'POST',
-        data: {
+        data: queryString.stringify({
           // eslint-disable-next-line camelcase
           grant_type: 'password',
           scope: 'openid',
           username: action.payload.username,
           password: action.payload.password,
-        },
+        }),
         url: '/token',
-        baseURL: process.env.REACT_APP_KEYCLOAK_BASE_URL,
+        baseURL: `${process.env.REACT_APP_KEYCLOAK_BASE_URL}`,
         headers: {
-          'Content-type': 'application/x-www-form-urlencoded; charset=utf-8',
+          'Content-type': 'application/x-www-form-urlencoded',
           Authorization:
             'Basic ' +
             btoa(

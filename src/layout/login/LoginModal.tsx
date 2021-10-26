@@ -7,7 +7,7 @@ import { login } from '../../store/userSlice';
 
 const schema = Yup.object({
   username: Yup.string().required(),
-  password: Yup.string().min(6),
+  password: Yup.string().min(6).required(),
   // .matches(/^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,32}$/, 'Invalid password pattern')
   // .required(),
 });
@@ -49,8 +49,17 @@ export function LoginModal(
               remember: false,
             }}
             validateOnBlur={true}
+            validateOnChange={true}
+            validateOnMount={false}
           >
-            {({ handleSubmit, handleChange, values, touched, errors }) => (
+            {({
+              handleSubmit,
+              handleChange,
+              values,
+              touched,
+              errors,
+              handleBlur,
+            }) => (
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Username/Email</Form.Label>
@@ -59,13 +68,16 @@ export function LoginModal(
                     name="username"
                     placeholder="Enter email"
                     onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.username}
+                    isValid={!errors.username}
                     isInvalid={!!errors.username}
                   />
                   <Form.Text className="text-muted">
                     We&apos;ll never share your email with anyone else.
                   </Form.Text>
                 </Form.Group>
-                {errors.username && (
+                {touched.username && errors.username && (
                   <Alert variant={'danger'}>{errors.username}</Alert>
                 )}
                 <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -74,10 +86,14 @@ export function LoginModal(
                     type="password"
                     name="password"
                     placeholder="Password"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.password}
+                    isValid={!errors.password}
                     isInvalid={!!errors.password}
                   />
                 </Form.Group>
-                {errors.password && (
+                {touched.password && errors.password && (
                   <Alert variant={'danger'}>{errors.password}</Alert>
                 )}
                 <Form.Group className="mb-3" controlId="formBasicCheckbox">
