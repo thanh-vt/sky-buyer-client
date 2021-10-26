@@ -5,6 +5,7 @@ import { AppHeader } from './layout/header/AppHeader';
 import { decrement, increment } from './store/counterSlice';
 import { RootState } from './store';
 import { useDispatch, useSelector } from 'react-redux';
+import { initToken } from './store/tokenSlice';
 
 function App(): ReactElement {
   const [title, setTitle] = useState('ThanhVT');
@@ -14,6 +15,7 @@ function App(): ReactElement {
   const count = useSelector((state: RootState) => state.counter.value);
   const theme = useSelector((state: RootState) => state.theme.value);
   const dispatch = useDispatch();
+  dispatch(initToken());
   return (
     <div className={`App ${theme}`}>
       <AppHeader />

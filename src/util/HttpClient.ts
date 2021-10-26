@@ -1,4 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { store } from '../store';
+import { updateToken } from '../store/tokenSlice';
 
 export interface TokenResponse {
   // eslint-disable-next-line camelcase
@@ -19,20 +21,8 @@ export interface TokenResponse {
   scope: string;
 }
 
-//get token o localStorage
-function getLocalAccessToken(): string {
-  const token = window.localStorage.getItem('accessToken');
-  console.log('token >>>', token);
-  return token || '';
-}
-
-//get token o refreshToken
-function getLocalRefreshToken() {
-  return window.localStorage.getItem('refreshToken');
-}
-
 //cau hinh axios
-const HttpClient: AxiosInstance = axios.create({
+export const httpClient: AxiosInstance = axios.create({
   baseURL: process.env.API_URL,
   timeout: 300000,
   headers: {
@@ -40,50 +30,31 @@ const HttpClient: AxiosInstance = axios.create({
   },
 });
 
-function storeToken(tokenResponse: TokenResponse) {
-  window.localStorage.setItem('accessToken', tokenResponse.access_token);
-  window.localStorage.setItem('refreshToken', tokenResponse.refresh_token);
-}
-
-export function getAccessToken(): Promise<AxiosResponse<TokenResponse>> {
-  return HttpClient.post<TokenResponse>(
-    '/token',
-    {
-      // eslint-disable-next-line camelcase
-      grant_type: 'password',
-      scope: 'openid',
-      username: process.env.KEYCLOAK_CLIENT_ID,
-      password: process.env.KEYCLOAK_CLIENT_SECRET,
-    },
-    { baseURL: process.env.KEYCLOAK_BASE_URL }
-  ).then((res) => {
-    storeToken(res.data);
-    return res;
-  });
-}
-
 function refreshToken(): Promise<AxiosResponse<TokenResponse>> {
-  return HttpClient.post<TokenResponse>(
+  return httpClient.post<TokenResponse>(
     '/token',
     {
       // eslint-disable-next-line camelcase
       grant_type: 'refresh_token',
       scope: 'openid',
-      refreshToken: getLocalRefreshToken(),
+      refreshToken: store.getState().token.refreshToken,
     },
-    { baseURL: process.env.KEYCLOAK_API }
+    { baseURL: process.env.REACT_APP_KEYCLOAK_BASE_URL }
   );
 }
 
 // Request interceptor for API calls
-HttpClient.interceptors.request.use(
+httpClient.interceptors.request.use(
   async (config) => {
-    const token = getLocalAccessToken();
-    config.headers = {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/x-www-form-urlencoded',
-    };
+    const savedToken = store.getState().token;
+    if (savedToken.existed) {
+      const token = savedToken.accessToken;
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      };
+    }
     return config;
   },
   (error) => {
@@ -92,7 +63,7 @@ HttpClient.interceptors.request.use(
 );
 
 // response parse
-HttpClient.interceptors.response.use(
+httpClient.interceptors.response.use(
   (response) => {
     return response;
   },
@@ -100,12 +71,12 @@ HttpClient.interceptors.response.use(
     const originalRequest = error.config;
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      const axiosResponse = await refreshToken();
-      storeToken(axiosResponse.data);
+      const res = await refreshToken();
+      store.dispatch(updateToken(res.data));
       axios.defaults.headers.common[
         'Authorization'
-      ] = `Bearer ${axiosResponse.data.access_token}`;
-      return HttpClient(originalRequest);
+      ] = `Bearer ${res.data.access_token}`;
+      return httpClient(originalRequest);
     }
     return Promise.reject(error);
   }
